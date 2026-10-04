@@ -1,0 +1,69 @@
+{
+  "name": "@mk/film-sheet",
+  "version": "0.1.0",
+  "description": "An Excel-like spreadsheet web component with a fast formula engine, built on Film",
+  "type": "module",
+  "license": "ISC",
+  "keywords": [
+    "spreadsheet",
+    "excel",
+    "formula",
+    "web-components",
+    "lit",
+    "film"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./engine": {
+      "types": "./dist/engine/index.d.ts",
+      "import": "./dist/engine.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "sideEffects": [
+    "./dist/index.js",
+    "./dist/ui/film-sheet.js"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "bench": "vitest bench --run",
+    "lint": "oxlint --type-aware --deny-warnings src test e2e demo",
+    "lint:fix": "oxlint --type-aware --fix src test e2e demo",
+    "test:coverage": "vitest run --coverage",
+    "check": "npm run typecheck && npm run lint && npm run test:coverage && npm run test:e2e",
+    "test:e2e": "playwright test",
+    "build:lib": "vite build --mode lib && tsc -p tsconfig.build.json",
+    "prepublishOnly": "npm run check && npm run build:lib"
+  },
+  "peerDependencies": {
+    "@mk/film": "^1.5.0",
+    "lit": "^3.2.0"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@mk/film": "^1.5.0",
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^24.19.1",
+    "@vitest/coverage-v8": "^5.0.3",
+    "lit": "^3.3.3",
+    "oxlint": "^1.86.0",
+    "oxlint-tsgolint": "^7.0.2003",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.2",
+    "vitest": "^5.0.3"
+  }
+}

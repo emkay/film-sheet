@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en" data-film-theme="paper">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FilmSheet</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23c4623a'/%3E%3Cpath d='M8 8h16v16H8zM8 14h16M8 19h16M14 8v16' stroke='white' stroke-width='2' fill='none'/%3E%3C/svg%3E" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="titlebar">
+        <div class="brand">
+          <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" /><path d="M8 8h16v16H8zM8 14h16M8 19h16M14 8v16" /></svg>
+          <input class="doc-title" value="Untitled spreadsheet" aria-label="Document title" spellcheck="false" />
+        </div>
+        <div class="title-controls">
+          <div class="demo-actions">
+            <film-button variant="neutral" size="small" class="load-sample">Load sample data</film-button>
+            <film-button variant="neutral" size="small" class="open-stress">Performance test…</film-button>
+          </div>
+          <film-select class="theme-select" aria-label="Colour theme" value="paper">
+            <film-select-option value="paper">Paper</film-select-option>
+            <film-select-option value="classic">Classic</film-select-option>
+            <film-select-option value="kodachrome">Kodachrome</film-select-option>
+            <film-select-option value="polaroid">Polaroid</film-select-option>
+            <film-select-option value="ektachrome">Ektachrome</film-select-option>
+            <film-select-option value="velvia">Velvia</film-select-option>
+          </film-select>
+          <film-switch class="dark-switch">Dark mode</film-switch>
+        </div>
+      </header>
+
+      <film-sheet storage-key="film-sheet:v1" filename="Untitled spreadsheet"></film-sheet>
+    </div>
+
+        <film-dialog id="stress-dialog" label="Performance test">
+      <film-stack space="s-1">
+        <film-text>Generates a sheet of random data plus a column of formulas per row, then measures how long it takes to build and recalculate. Editing a value in column A afterwards only recalculates the cells that depend on it.</film-text>
+        <film-select class="stress-rows" label="Rows" value="100000">
+          <film-select-option value="10000">10,000 rows</film-select-option>
+          <film-select-option value="100000">100,000 rows</film-select-option>
+          <film-select-option value="250000">250,000 rows</film-select-option>
+          <film-select-option value="500000">500,000 rows</film-select-option>
+        </film-select>
+        <film-progress-bar class="stress-progress" value="0" hidden></film-progress-bar>
+        <film-text class="stress-result" size="s-1"></film-text>
+      </film-stack>
+      <film-button slot="footer" variant="neutral" class="stress-close">Close</film-button>
+      <film-button slot="footer" class="stress-run">Run test</film-button>
+    </film-dialog>
+
+    <script type="module" src="/demo/main.ts"></script>
+  </body>
+</html>

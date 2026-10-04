@@ -1,0 +1,533 @@
+/* <film-sheet> styles. Film's theme CSS (custom properties) must be loaded by
+   the page; everything else the component needs lives here. */
+
+:host {
+  /* Film sizes everything from a rem-based modular scale. A widget shouldn't
+     grow and shrink with the host page's root font size, so the scale is
+     rebuilt from one size here. Set --film-sheet-size to resize the UI. */
+  --film-sheet-size: 14px;
+  --s0: var(--film-sheet-size);
+  --s-1: calc(var(--s0) / var(--ratio, 1.5));
+  --s-2: calc(var(--s-1) / var(--ratio, 1.5));
+  --s-3: calc(var(--s-2) / var(--ratio, 1.5));
+  --s-4: calc(var(--s-3) / var(--ratio, 1.5));
+  --s-5: calc(var(--s-4) / var(--ratio, 1.5));
+  --s1: calc(var(--s0) * var(--ratio, 1.5));
+  --s2: calc(var(--s1) * var(--ratio, 1.5));
+  --s3: calc(var(--s2) * var(--ratio, 1.5));
+  --s4: calc(var(--s3) * var(--ratio, 1.5));
+  --s5: calc(var(--s4) * var(--ratio, 1.5));
+  --border-thin: var(--s-5);
+  --border-thick: var(--s-2);
+  display: block;
+  /* A spreadsheet needs a height: the page sets one, this is the fallback. */
+  height: 32em;
+  min-height: 16em;
+  container-type: inline-size;
+  color: var(--film-color-text);
+  background: var(--film-color-background);
+  font-family: var(--film-font-sans);
+  font-size: var(--film-sheet-size);
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.sheet {
+  /* A column, not grid rows: hiding chrome mustn't shift the grid into an auto row. */
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border: var(--border-thin) solid var(--film-color-border);
+  box-sizing: border-box;
+}
+
+/* chrome="minimal": formula bar, grid and sheet tabs. chrome="none": just the grid. */
+:host([chrome='minimal']) .menubar,
+:host([chrome='minimal']) .toolbar,
+:host([chrome='none']) .menubar,
+:host([chrome='none']) .toolbar,
+:host([chrome='none']) .formula-bar,
+:host([chrome='none']) .sheet-bar {
+  display: none;
+}
+
+/* Read-only: nothing on the toolbar applies. */
+:host([readonly]) .toolbar,
+:host([readonly]) .find-replace,
+:host([readonly]) .find-replace-all,
+:host([readonly]) .replace-input,
+:host([readonly]) [data-cmd='insert.sheet'] {
+  display: none;
+}
+
+
+/* Menu bar --------------------------------------------------------------- */
+
+.menubar {
+  padding-block: 0;
+  font-size: 0.9em;
+}
+
+film-menu-item film-kbd {
+  margin-inline-start: auto;
+  padding-inline-start: var(--s1);
+  font-size: 0.75em;
+  opacity: 0.75;
+}
+
+film-menu-item .eg {
+  margin-inline-start: auto;
+  padding-inline-start: var(--s0);
+  color: var(--film-color-text-muted);
+  font-size: 0.8em;
+}
+
+/* Toolbar ---------------------------------------------------------------- */
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+  padding: var(--s-4) var(--s-1);
+  background: var(--film-color-surface);
+  border-block-end: var(--border-thin) solid var(--film-color-border);
+  font-size: 0.9em;
+}
+
+.toolbar svg,
+.sheet-bar svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* The "on" state needs 3:1 against the toolbar (WCAG 1.4.11): a solid
+   inset ring in the focus colour, plus a light tint. */
+.toolbar film-icon-button[data-on] {
+  background: color-mix(in oklab, var(--film-color-focus) 14%, transparent);
+  box-shadow: inset 0 0 0 2px var(--film-color-focus);
+  border-radius: var(--film-radius);
+}
+
+@media (forced-colors: active) {
+  .toolbar film-icon-button[data-on] {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+}
+
+.toolbar film-divider[vertical] {
+  align-self: stretch;
+}
+
+.format-select {
+  min-width: 8.5em;
+  font-size: 0.85em;
+}
+
+.sum-button {
+  white-space: nowrap;
+}
+
+.swatch-bar {
+  fill: currentColor;
+}
+
+.color-dropdown[data-target='fill'] .swatch-bar {
+  fill: #fff4c2;
+}
+
+.swatches {
+  display: grid;
+  grid-template-columns: repeat(6, 22px);
+  gap: 6px;
+  padding: var(--s-2);
+  background: var(--film-color-surface);
+  border: var(--border-thin) solid var(--film-color-border);
+  border-radius: var(--film-radius-lg);
+  box-shadow: var(--film-shadow-2);
+}
+
+.swatch {
+  inline-size: 22px;
+  block-size: 22px;
+  /* ≥3:1 so white and pale swatches are still visible (WCAG 1.4.11). */
+  border: 1px solid var(--film-color-control-border);
+  border-radius: 4px;
+  padding: 0;
+  cursor: pointer;
+}
+
+.swatch[aria-pressed='true'] {
+  outline: 2px solid var(--film-color-text);
+  outline-offset: 1px;
+}
+
+.swatch:hover,
+.swatch:focus-visible {
+  outline: 2px solid var(--film-color-focus);
+  outline-offset: 1px;
+}
+
+.swatch-reset {
+  grid-column: 1 / -1;
+  font: inherit;
+  font-size: 0.85em;
+  color: var(--film-color-text);
+  background: none;
+  border: 1px solid var(--film-color-border);
+  border-radius: var(--film-radius-sm);
+  padding: 4px;
+  cursor: pointer;
+}
+
+.swatch-reset:hover {
+  background: var(--film-color-info);
+}
+
+/* Formula bar ------------------------------------------------------------ */
+
+.formula-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-4) var(--s-1);
+  background: var(--film-color-surface);
+  border-block-end: var(--border-thin) solid var(--film-color-border);
+}
+
+.name-box {
+  inline-size: 7.5em;
+  flex: none;
+  padding-inline-end: calc(1.2em + 2 * var(--border-thin));
+  box-sizing: border-box;
+  font-family: var(--film-font-mono);
+  font-size: 0.85em;
+}
+
+.fx {
+  font-style: italic;
+  font-family: var(--film-font-serif);
+  color: var(--film-color-text-muted);
+  padding-inline: var(--s-3);
+  border-inline-start: 1px solid var(--film-color-border);
+  border-inline-end: 1px solid var(--film-color-border);
+}
+
+.formula-input {
+  flex: 1;
+  min-width: 0;
+  /* film-input's inner field is width:100% plus its own padding and border,
+     so it overflows its host; reserve that much room on the right. */
+  padding-inline-end: calc(1.2em + 2 * var(--border-thin));
+  font-family: var(--film-font-mono);
+  font-size: 0.85em;
+}
+
+/* Grid ------------------------------------------------------------------- */
+
+.grid-host {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.grid {
+  position: absolute;
+  inset: 0;
+}
+
+.grid-canvas {
+  position: absolute;
+  inset: 0 auto auto 0;
+  display: block;
+}
+
+.grid-scroller {
+  position: absolute;
+  inset: 0;
+  overflow: scroll;
+  outline: none;
+  touch-action: pan-x pan-y;
+}
+
+.grid-spacer {
+  pointer-events: none;
+}
+
+.cell-editor {
+  position: absolute;
+  display: none;
+  z-index: 5;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0 3px;
+  line-height: 22px;
+  resize: none;
+  overflow: hidden;
+  white-space: pre;
+  color: var(--film-color-text);
+  background: var(--film-color-surface);
+  border: 2px solid var(--film-color-focus);
+  box-shadow: var(--film-shadow-1);
+  outline: none;
+}
+
+.autocomplete,
+.sig-hint {
+  position: absolute;
+  display: none;
+  z-index: 6;
+  background: var(--film-color-surface);
+  color: var(--film-color-text);
+  border: var(--border-thin) solid var(--film-color-border);
+  border-radius: var(--film-radius);
+  box-shadow: var(--film-shadow-2);
+  font-size: 0.85em;
+}
+
+.autocomplete {
+  max-block-size: 16em;
+  overflow-y: auto;
+  min-inline-size: 18em;
+  padding: 3px;
+}
+
+.ac-item {
+  display: flex;
+  gap: var(--s-1);
+  align-items: baseline;
+  padding: 4px 8px;
+  border-radius: var(--film-radius-sm);
+  cursor: pointer;
+}
+
+.ac-item strong {
+  font-family: var(--film-font-mono);
+  font-weight: 600;
+}
+
+.ac-item span {
+  color: var(--film-color-text-muted);
+  font-size: 0.8em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ac-item.selected,
+.ac-item:hover {
+  background: var(--film-color-info);
+}
+
+/* Muted text drops below 4.5:1 on the highlight in dark themes. */
+.ac-item.selected span,
+.ac-item:hover span,
+.fn-row:hover span,
+.fn-row:focus-visible span {
+  color: var(--film-color-text);
+}
+
+.sig-hint {
+  padding: 6px 10px;
+  font-family: var(--film-font-mono);
+  pointer-events: none;
+  max-inline-size: 32em;
+}
+
+.sig-hint b {
+  color: var(--film-color-link);
+}
+
+.sig-desc {
+  font-family: var(--film-font-sans);
+  color: var(--film-color-text-muted);
+  font-size: 0.8em;
+  margin-block-start: 2px;
+}
+
+/* Sheet tabs & status bar ------------------------------------------------ */
+
+.sheet-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 0 var(--s-1);
+  background: var(--film-color-surface);
+  border-block-start: var(--border-thin) solid var(--film-color-border);
+  font-size: 0.85em;
+  min-height: 2.4em;
+}
+
+.sheet-tabs {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.sheet-tabs::part(tablist) {
+  border: none;
+}
+
+.sheet-tabs film-tab {
+  padding-block: 0.45em;
+  user-select: none;
+}
+
+.status {
+  margin-inline-start: auto;
+  display: flex;
+  gap: var(--s0);
+  align-items: center;
+  color: var(--film-color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  font-variant-numeric: tabular-nums;
+}
+
+.status-mode {
+  font-weight: 600;
+  color: var(--film-color-text);
+  min-width: 3.5em;
+}
+
+/* Popover menus ---------------------------------------------------------- */
+
+.context-menu {
+  position: fixed;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  inset: auto;
+  overflow: visible;
+  font-size: 0.9em;
+}
+
+/* Dialogs ---------------------------------------------------------------- */
+
+.dialog-form {
+  margin: 0;
+  min-inline-size: 20em;
+}
+
+#find-dialog film-stack {
+  min-inline-size: 26em;
+}
+
+.shortcuts table {
+  border-collapse: collapse;
+  font-size: 0.9em;
+}
+
+.shortcuts td {
+  padding: 4px 12px 4px 0;
+  border-block-end: 1px solid var(--film-color-border);
+  vertical-align: top;
+}
+
+.shortcuts td:first-child {
+  white-space: nowrap;
+}
+
+.fn-list {
+  max-block-size: 55vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  min-inline-size: min(34em, 80vw);
+}
+
+.fn-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  text-align: start;
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  border-block-end: 1px solid var(--film-color-border);
+  padding: 6px 4px;
+  cursor: pointer;
+}
+
+.fn-row:hover,
+.fn-row:focus-visible {
+  background: var(--film-color-info);
+}
+
+.fn-row code {
+  font-family: var(--film-font-mono);
+  font-size: 0.85em;
+}
+
+.fn-row span {
+  color: var(--film-color-text-muted);
+  font-size: 0.8em;
+}
+
+/* Small screens / high zoom (WCAG 1.4.10): the toolbar becomes one
+   scrollable row instead of wrapping into many, and when the window is very
+   short the page scrolls so the grid keeps a usable height and the sheet
+   tabs stay reachable. Everything stays available — nothing is hidden. */
+@container (max-width: 720px) {
+  .toolbar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+
+  .toolbar > * {
+    flex: none;
+  }
+
+  .status {
+    flex-wrap: wrap;
+    white-space: normal;
+    gap: var(--s-2);
+  }
+
+  .sheet-bar {
+    flex-wrap: wrap;
+  }
+}
+
+/* Accessibility -------------------------------------------------------- */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* The active-cell proxy sits exactly over the cell; the canvas draws the
+   visible selection, so the proxy itself is invisible and click-through. */
+.a11y-slot {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.cell-proxy {
+  position: absolute;
+  color: transparent;
+  overflow: hidden;
+  white-space: nowrap;
+  outline: none;
+  font-size: 1px;
+}

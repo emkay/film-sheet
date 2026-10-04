@@ -1,0 +1,127 @@
+/* Demo page chrome: the title bar around <film-sheet>. */
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--film-color-background);
+  color: var(--film-color-text);
+  font-family: var(--film-font-sans);
+}
+
+/* Film's fluid root size suits documents; an app page wants it fixed. */
+:root {
+  font-size: 14px;
+}
+
+.page {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100vh;
+  height: 100dvh;
+}
+
+film-sheet {
+  height: auto;
+  min-height: 0;
+}
+
+.demo-actions {
+  display: flex;
+  gap: var(--s-2);
+}
+
+@media (max-height: 520px) {
+  html,
+  body {
+    overflow: auto;
+  }
+
+  .page {
+    height: auto;
+    grid-template-rows: auto minmax(24rem, 1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  .doc-title {
+    width: 14ch;
+  }
+
+  .titlebar {
+    flex-wrap: wrap;
+  }
+}
+
+/* Title bar -------------------------------------------------------------- */
+
+.titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s0);
+  padding: var(--s-3) var(--s-1);
+  background: var(--film-color-surface);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-width: 0;
+}
+
+.brand svg {
+  inline-size: 26px;
+  block-size: 26px;
+  flex: none;
+}
+
+.brand svg rect {
+  fill: var(--film-color-primary);
+}
+
+.brand svg path {
+  stroke: var(--film-color-primary-text);
+  stroke-width: 2;
+  fill: none;
+}
+
+.doc-title {
+  font: inherit;
+  font-size: 1.05rem;
+  color: inherit;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--film-radius-sm);
+  padding: 2px 6px;
+  min-width: 0;
+  width: 28ch;
+}
+
+.doc-title:hover {
+  border-color: var(--film-color-border);
+}
+
+.doc-title:focus-visible {
+  outline: 2px solid var(--film-color-focus);
+  outline-offset: 0;
+}
+
+.title-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+  font-size: 0.85rem;
+}
+
+.save-state {
+  color: var(--film-color-text-muted);
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.theme-select {
+  min-width: 9.5rem;
+}
+

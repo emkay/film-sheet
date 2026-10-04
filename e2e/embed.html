@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Embed test page</title>
+    <style>
+      film-sheet { height: 320px; margin-block: 8px; }
+    </style>
+  </head>
+  <body>
+    <label>Outside input <input id="outside" value="page text" /></label>
+    <film-sheet id="one"></film-sheet>
+    <film-sheet id="two" chrome="minimal"></film-sheet>
+    <script type="module">
+      import '@mk/film/css/themes/default/index.css'
+      import '/src/index.ts'
+    </script>
+  </body>
+</html>

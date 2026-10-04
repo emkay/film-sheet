@@ -1,0 +1,65 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": [
+    "typescript",
+    "unicorn",
+    "oxc",
+    "import",
+    "vitest"
+  ],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "perf": "warn"
+  },
+  "env": {
+    "browser": true,
+    "es2024": true
+  },
+  "rules": {
+    "no-unused-vars": "error",
+    "eqeqeq": [
+      "error",
+      "always",
+      {
+        "null": "ignore"
+      }
+    ],
+    "no-var": "error",
+    "prefer-const": "error",
+    "typescript/no-explicit-any": "warn",
+    "typescript/no-non-null-asserted-optional-chain": "error",
+    "unicorn/no-new-array": "off",
+    "import/no-cycle": "error",
+    "unicorn/consistent-function-scoping": "off",
+    "unicorn/no-array-sort": "off",
+    "unicorn/no-array-reverse": "off",
+    "unicorn/no-array-fill-with-reference-type": "off",
+    "import/no-unassigned-import": "off",
+    "typescript/no-unsafe-type-assertion": "off",
+    "typescript/consistent-return": "off",
+    "consistent-return": "off",
+    "no-underscore-dangle": [
+      "warn",
+      {
+        "allow": [
+          "_controller"
+        ]
+      }
+    ]
+  },
+  "ignorePatterns": [
+    "dist/**",
+    "node_modules/**"
+  ],
+  "overrides": [
+    {
+      "files": [
+        "e2e/**"
+      ],
+      "rules": {
+        "no-await-in-loop": "off"
+      }
+    }
+  ]
+}
