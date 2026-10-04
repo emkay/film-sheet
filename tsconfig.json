@@ -16,16 +16,12 @@
     "isolatedModules": true,
     "noEmit": true,
     "types": [
-      "vite/client",
-      "node"
+      "vite/client"
     ]
   },
   "include": [
     "src",
     "test",
-    "e2e",
-    "demo",
-    "playwright.config.ts",
-    "vite.config.ts"
+    "demo"
   ]
 }

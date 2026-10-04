@@ -3,7 +3,16 @@
   "version": "0.1.0",
   "description": "An Excel-like spreadsheet web component with a fast formula engine, built on Film",
   "type": "module",
-  "license": "ISC",
+  "license": "MIT",
+  "author": "Michael Matuzak",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/emkay/film-sheet.git"
+  },
+  "homepage": "https://github.com/emkay/film-sheet#readme",
+  "bugs": {
+    "url": "https://github.com/emkay/film-sheet/issues"
+  },
   "keywords": [
     "spreadsheet",
     "excel",
@@ -28,25 +37,29 @@
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "sideEffects": [
     "./dist/index.js",
     "./dist/ui/film-sheet.js"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build",
+    "build": "npm run typecheck && vite build",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.node.json",
+    "lint": "oxlint --type-aware --deny-warnings src test e2e demo scripts",
+    "lint:fix": "oxlint --type-aware --fix src test e2e demo scripts",
     "test": "vitest run",
-    "bench": "vitest bench --run",
-    "lint": "oxlint --type-aware --deny-warnings src test e2e demo",
-    "lint:fix": "oxlint --type-aware --fix src test e2e demo",
     "test:coverage": "vitest run --coverage",
-    "check": "npm run typecheck && npm run lint && npm run test:coverage && npm run test:e2e",
     "test:e2e": "playwright test",
+    "check": "npm run typecheck && npm run lint && npm run test:coverage && npm run test:e2e",
     "build:lib": "vite build --mode lib && tsc -p tsconfig.build.json",
+    "verify:package": "node scripts/verify-package.mjs",
     "prepublishOnly": "npm run check && npm run build:lib"
   },
   "peerDependencies": {

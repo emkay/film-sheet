@@ -1,0 +1,50 @@
+name: Release
+
+# Publishes to npm when a GitHub release is published. The release tag must
+# match package.json's version (e.g. tag v0.2.0 for version 0.2.0).
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  id-token: write # npm provenance and trusted publishing (OIDC)
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    environment: npm
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          registry-url: https://registry.npmjs.org
+          cache: npm
+      - name: Check the tag matches package.json
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          if [ "${GITHUB_REF_NAME#v}" != "$version" ]; then
+            echo "::error::Release tag $GITHUB_REF_NAME does not match package.json version $version"
+            exit 1
+          fi
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Full check
+        run: npm run check
+      - name: Build library
+        run: npm run build:lib
+      - name: Verify the packed package
+        run: npm run verify:package
+      # Checks and build already ran above, so skip prepublishOnly.
+      # Prefers npm trusted publishing (OIDC); NPM_TOKEN is the fallback,
+      # needed for the very first publish before trusted publishing can be set up.
+      - name: Publish
+        run: npm publish --provenance --access public --ignore-scripts
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
